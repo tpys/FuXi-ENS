@@ -46,7 +46,7 @@ def save_pred(output, input, step, member=0):
             member=[member],
         )
     ).astype(np.float32)
-    print_dataarray(out)
+    print_xarray(out)
     save_name = os.path.join(tmp_dir, f'{step:03d}.{save_type}')
     save_with_progress(out, save_name)
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     assert os.path.exists(args.model), f"Model file {args.model} not found!"
 
     input = xr.open_dataarray(args.input)
-    print_dataarray(input)        
+    print_xarray(input)        
     
     print(f'Load FuXi ...')       
     start = perf_counter()

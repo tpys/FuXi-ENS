@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-__all__ = ["print_dataarray", "save_with_progress"]
+__all__ = ["print_xarray", "save_with_progress"]
 
 
-def print_dataarray(ds, names=[]):
+def print_xarray(ds, names=[]):
     
     if "time" in ds.dims:
         v = ds.isel(time=0)
