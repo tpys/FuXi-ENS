@@ -104,4 +104,4 @@ The `input.nc` file contains preprocessed data from the origin ERA5 files. The f
 ```
 
 The last 11 variables: **('t2m', 'd2m', 'sst', 'u10m', 'v10m', 'u100m', 'v100m',
-'msl', 'ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are surface variables, while the remaining variables represent atmosphere variables with numbers indicating pressure levels. The final five variables **('ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are accumulated variables. These can be set to zero or left as they are, as the model will set them to zero during inference.
+'msl', 'ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are surface variables, while the remaining variables represent atmosphere variables with numbers indicating pressure levels. The last five variables, namely **('ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are accumulated variables. These can be set to zero or left as they are, as the model will set them to zero during inference.
