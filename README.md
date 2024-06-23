@@ -5,7 +5,7 @@ This is the official repository for the FuXi-ENS paper.
 
 FuXi-ENS: A machine learning model for medium-range ensemble weather forecasting
 
-by Xiaohui Zhong, Lei Chen, Hao Li, Jun Liu, Xu Fan, Jie Feng, Kan Dai, Jie Wu, Bo Lu
+by Xiaohui Zhong, Lei Chen, Hao Li, Jun Liu, Xu Fan, Jie Feng, Kan Dai, Jing-Jia Luo, Jie Wu, Bo Lu
 
 
 ## Installation
