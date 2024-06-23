@@ -86,7 +86,7 @@ python eval.py \
 
 ## Input preparation 
 
-The `input.nc` file contains preprocessed data from the origin ERA5 files. The file has a shape of **(2, 78, 121, 240)**, where the first dimension represents two time steps. The second dimension represents all variable and level combinations, named in the following exact order:
+The `input.nc` file contains preprocessed data from the origin ERA5 files. The file has a shape of **(2, 78, 721, 1440)**, where the first dimension represents two time steps. The second dimension represents all variable and level combinations, named in the following exact order:
 
 
 
@@ -103,5 +103,4 @@ The `input.nc` file contains preprocessed data from the origin ERA5 files. The f
 'msl', 'ssr', 'ssrd', 'fdir', 'ttr', 'tp']
 ```
 
-The last 11 variables: **('t2m', 'd2m', 'sst', 'u10m', 'v10m', 'u100m', 'v100m',
-'msl', 'ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are surface variables, while the remaining variables represent atmosphere variables with numbers indicating pressure levels. The last five variables, namely **('ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are accumulated variables. These can be set to zero or left as they are, as the model will set them to zero during inference.
+The last eleven variables **('t2m', 'd2m', 'sst', 'u10m', 'v10m', 'u100m', 'v100m', 'msl', 'ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are surface variables, while the others represent atmospheric variables at different pressure levels. The final five variables **('ssr', 'ssrd', 'fdir', 'ttr', 'tp')** are accumulated variables. These can be set to zero or left unchanged for input data, as the model will reset them to zero during inference.
