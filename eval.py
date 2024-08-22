@@ -10,7 +10,7 @@ from data_util import *
 parser = argparse.ArgumentParser()
 parser.add_argument('--output_dir', type=str, required=True)
 parser.add_argument('--target_dir', type=str, required=True)
-parser.add_argument('--test_chans', type=str, nargs='+', default=["z500", "t850", "t2m", "tp"])
+parser.add_argument('--test_chans', type=str, nargs='+', default=["z500", "t850", "msl", "t2m", "tp"])
 parser.add_argument('--test_steps', type=int, nargs='+', default=[1, 12, 20, 40, 60])
 parser.add_argument('--hour_interval', type=int, default=6)
 parser.add_argument('--save_type', type=str, default="nc", choices=["nc", "zarr"])
