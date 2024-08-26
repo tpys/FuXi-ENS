@@ -15,17 +15,18 @@ parser.add_argument('--model', type=str, required=True,
                     help="Path to the ONNX file for the FuXi-S2S model.")
 parser.add_argument('--input', type=str, required=True, 
                     help="Path to the input NetCDF data file.")
-parser.add_argument('--save_dir', type=str, required=True, 
+parser.add_argument('--save_dir', type=str, default="./output", 
                     help="Directory where the prediction output will be saved.")
 parser.add_argument('--save_type', type=str, default="nc", choices=["nc", "zarr"])
 parser.add_argument('--device', type=str, default="cuda", choices=["cuda", "cpu"])
 parser.add_argument('--total_step', type=int, default=1)
 parser.add_argument('--total_member', type=int, default=1)
 parser.add_argument('--hour_interval', type=int, default=6)
+parser.add_argument('--interp', action="store_true")
 args = parser.parse_args()
 
 
-def save_pred(output, input, step, member=0):
+def save_pred(output, input, steps, member=0):
     save_type = args.save_type
     save_dir = args.save_dir
 
@@ -33,22 +34,22 @@ def save_pred(output, input, step, member=0):
     os.makedirs(tmp_dir, exist_ok=True)
 
     init_time = pd.to_datetime(input.time.data[-1])
-    out = xr.DataArray(
-        name="data",
+    pred = xr.DataArray(
+        name="output",
         data=output[..., np.newaxis],
         dims=['time', 'step', 'channel', 'lat', 'lon', 'member'],
         coords=dict(
             time=[init_time],
-            step=[step],
+            step=steps,
             channel=input.channel,
             lat=input.lat,
             lon=input.lon,
             member=[member],
         )
     ).astype(np.float32)
-    print_xarray(out)
-    save_name = os.path.join(tmp_dir, f'{step:03d}.{save_type}')
-    save_with_progress(out, save_name)
+    print_xarray(pred)
+    save_name = os.path.join(tmp_dir, f'{steps[0]:03d}.{save_type}')
+    save_with_progress(pred, save_name)
 
     
 def load_model(model_name, device):
@@ -105,18 +106,23 @@ def run_inference(model,  input):
 
             if "hour" in input_names:
                 hour = [valid_time.hour/24]
-                # print(f"hour: {hour}")
                 inputs['hour'] = np.array(hour, dtype=np.float32)     
 
             if "doy" in input_names:
                 doy = min(365, valid_time.day_of_year)/365 
-                # print(f"doy: {doy}")
                 inputs['doy'] = np.array([doy], dtype=np.float32)
 
             start_time = perf_counter()
-            new_input, = model.run(None, inputs)
-            output = deepcopy(new_input[:, -1:])
-            save_pred(output, input, t+1,  member)
+
+            if args.interp:
+                new_input, output = model.run(None, inputs)
+            else:
+                new_input, = model.run(None, inputs)
+                output = deepcopy(new_input[:, -1:])
+
+            k = t * output.shape[1]
+            steps = k+1+np.arange(output.shape[1])
+            save_pred(output, input, steps,  member)
             elapsed_time = perf_counter() - start_time
             
             print(f"member: {member:03d}, step {t+1:03d}, time: {elapsed_time:.3f} secs")
@@ -140,10 +146,9 @@ if __name__ == "__main__":
     print(f'Load FuXi ...')       
     start = perf_counter()
     model = load_model(args.model, args.device)
-    input_names = [input.name for input in model.get_inputs()]
-    print(f"{input_names=}")
+    input_names = [x.name for x in model.get_inputs()]
+    print(f"input_names: {input_names}")
     print(f'Load FuXi take {perf_counter() - start:.2f} secs')
-    
     run_inference(model, input)
 
 

@@ -10,13 +10,8 @@ def print_xarray(ds, desp="", names=[]):
         for v in ds:
             print_xarray(ds[v], desp=desp, names=names)
         return
-
-    if "time" in ds.dims:
-        t = np.random.randint(0, len(ds.time))
-        v = ds.isel(time=[0, t, -1])
-    else:
-        v = ds
-
+    
+    v = ds
     msg = f"{v.name.upper()} {desp}: \nshape: \033[94m{v.shape}\033[0m"
 
     if "time" in ds.dims:
