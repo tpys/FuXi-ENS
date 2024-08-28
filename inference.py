@@ -17,7 +17,7 @@ parser.add_argument('--input', type=str, required=True,
                     help="Path to the input NetCDF data file.")
 parser.add_argument('--save_dir', type=str, default="./output", 
                     help="Directory where the prediction output will be saved.")
-parser.add_argument('--save_type', type=str, default="nc", choices=["nc", "zarr"])
+parser.add_argument('--save_type', type=str, default="zarr", choices=["nc", "zarr"])
 parser.add_argument('--device', type=str, default="cuda", choices=["cuda", "cpu"])
 parser.add_argument('--total_step', type=int, default=1)
 parser.add_argument('--total_member', type=int, default=1)
@@ -140,9 +140,10 @@ if __name__ == "__main__":
     assert os.path.exists(args.input), f"Input file {args.input} not found!"
     assert os.path.exists(args.model), f"Model file {args.model} not found!"
 
-    input = xr.open_dataarray(args.input)
+    engine = "zarr" if args.input.endswith("zarr") else "netcdf4"
+    input = xr.open_dataarray(args.input, engine=engine)
     print_xarray(input)        
-    
+
     print(f'Load FuXi ...')       
     start = perf_counter()
     model = load_model(args.model, args.device)
