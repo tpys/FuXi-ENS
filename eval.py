@@ -57,6 +57,7 @@ def merge_output(output_dir):
     ds = xr.open_mfdataset(
         file_names, engine="zarr" if save_type == "zarr" else "netcdf4",
     ).chunk({'time': 1, 'step': 1})
+    ds['channel'] = ds['channel'].str.lower()
 
     test_steps = np.intersect1d(ds.step, test_steps)
     test_chans = np.intersect1d(ds.channel, test_chans)
@@ -96,8 +97,15 @@ if __name__ == "__main__":
     output = xr.open_dataarray(output_file)
     target = xr.open_dataarray(target_file)
 
+    # Convert channel names to lowercase
+    output['channel'] = output['channel'].str.lower()
+    target['channel'] = target['channel'].str.lower()
+
     test_chans = np.intersect1d(target.channel, test_chans)
     test_steps = np.intersect1d(output.step.data, test_steps)
+
+    print(f"Test Channels: {test_chans}")
+    print(f"Test Steps: {test_steps}")
 
     output = output.sel(channel=test_chans)
     target = target.sel(channel=test_chans)

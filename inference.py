@@ -61,19 +61,27 @@ def load_model(model_name, device):
     options.enable_cpu_mem_arena = True
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     
+    providers = []
     if device == "cuda":
-        providers = [('CUDAExecutionProvider', {'arena_extend_strategy':'kSameAsRequested'})]
-    elif device == "cpu":
-        providers=['CPUExecutionProvider']
+        cuda_provider = ('CUDAExecutionProvider', {'arena_extend_strategy':'kSameAsRequested'})
+        if 'CUDAExecutionProvider' in ort.get_available_providers():
+            providers.append(cuda_provider)
+        else:
+            print("Warning: CUDA Execution Provider not available. Falling back to CPU.")
+    
+    # Always add CPU provider as fallback
+    providers.append('CPUExecutionProvider')
+
+    if device == "cpu":
         options.intra_op_num_threads = os.cpu_count() or 1
-    else:
-        raise ValueError("device must be cpu or cuda!")
 
     session = ort.InferenceSession(
         model_name,  
         sess_options=options, 
         providers=providers
     )
+    
+    print(f"Using providers: {session.get_providers()}")
     return session
 
 
