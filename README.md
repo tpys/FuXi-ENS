@@ -59,7 +59,7 @@ pip install onnxruntime-gpu
 
 
 ## Usage
-To use the model for inference, run the following command:
+Inference for fuxi-ens (c78), run the following command:
 
 ```python 
 python inference.py \
@@ -70,6 +70,19 @@ python inference.py \
     --hour_interval 6 \
     --save_dir data/output;
 ```
+
+Inference for fuxi-hourly (c88), run the following command:
+
+```python 
+python inference.py \
+    --interp \
+    --model model/c88_hourly.onnx \
+    --input data/input.nc \
+    --total_step 20 \
+    --hour_interval 6 \
+    --save_dir data/output;
+```
+
 
 To evaluate the model's performance, use the following command:
 
